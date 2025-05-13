@@ -24,12 +24,20 @@ describe StepResultsController, type: :controller do
       }
     end
 
-    it 'calls create activity service' do
+    it 'calls create link step result succesfully' do
+      expect(Activities::CreateActivityService)
+        .to(receive(:call)
+        .with(hash_including(activity_type: :task_result_task_protocol_step_linked)))
       action
       expect(response).to have_http_status(:success)
     end
 
-    it 'calls create activity service' do
+    it 'adds activity in DB' do
+      expect { action }
+        .to(change { Activity.count })
+    end
+
+    it 'calls create link step result unsuccesfully for step and result from different task' do
       params[:step_id] = step_second.id
       action
       expect(response).to have_http_status(:forbidden)
@@ -39,12 +47,20 @@ describe StepResultsController, type: :controller do
   describe 'DELETE destroy' do
     let(:action) { delete :destroy, params: params, format: :json }
 
-    context 'when in protocol repository' do
+    context 'calls deleting step result' do
       let(:params) { { id: step_result.id } }
 
-      it 'calls create activity for deleting step in protocol repository' do
+      it 'calls create activity for deleting step result' do
+        expect(Activities::CreateActivityService)
+          .to(receive(:call)
+          .with(hash_including(activity_type: :task_result_task_protocol_step_unlinked)))
         action
         expect(response).to have_http_status(:success)
+      end
+
+      it 'adds activity in DB' do
+        expect { action }
+          .to(change { Activity.count })
       end
     end
   end

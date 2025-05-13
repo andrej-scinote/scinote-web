@@ -376,6 +376,8 @@ en:
       form_unpublished_html: "%{user} unpublished form %{form}."
       task_steps_loaded_from_template_html: "%{user} added %{count} steps from template %{protocol} to task %{my_module}."
       protocol_steps_loaded_from_template_html: "%{user} added %{count} steps from template %{protocol}."
+      task_result_task_protocol_step_linked_html: "%{user} linked result %{result} and step %{step_position} %{step} on task %{my_module}."
+      task_result_task_protocol_step_unlinked_html: "%{user} unlinked result %{result} and step %{step_position} %{step} on task %{my_module}."
     activity_name:
       create_project: "Project created"
       rename_project: "Project renamed"
@@ -709,6 +711,8 @@ en:
       form_unpublished: "Form unpublished"
       task_steps_loaded_from_template: "Task step loaded from template"
       protocol_steps_loaded_from_template: "Step loaded from template"
+      task_result_task_protocol_step_linked: "Task Result and Task protocol step linked"
+      task_result_task_protocol_step_unlinked: "Task Result and Task protocol step unlinked"
     activity_group:
       projects: "Projects"
       task_results: "Task results"

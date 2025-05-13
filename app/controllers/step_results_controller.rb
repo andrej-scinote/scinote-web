@@ -9,6 +9,7 @@ class StepResultsController < ApplicationController
   def create
     ActiveRecord::Base.transaction do
       @step_result = StepResult.create!(step: @step, result: @result, created_by: current_user)
+      log_activity(:task_result_task_protocol_step_linked, @step, @result)
       render json: { step_result: { id: @step_result.id } }
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error e.message
@@ -19,6 +20,7 @@ class StepResultsController < ApplicationController
   def destroy
     ActiveRecord::Base.transaction do
       if @step_result.destroy
+        log_activity(:task_result_task_protocol_step_unlinked, @step, @result)
         render json: {}, status: :ok
       else
         render json: { errors: @step_result.errors.full_messages }, status: :unprocessable_entity
@@ -49,5 +51,21 @@ class StepResultsController < ApplicationController
 
   def check_manage_permissions
     render_403 unless @step.my_module == @result.my_module && can_manage_my_module?(@step.my_module)
+  end
+
+  def log_activity(type_of, step, result)
+    Activities::CreateActivityService.call(
+      activity_type: type_of,
+      owner: current_user,
+      subject: step.my_module,
+      team: step.team,
+      project: step.my_module.project,
+      message_items: {
+        my_module: step.my_module.id,
+        result: result.id,
+        step: step.id,
+        step_position: { id: step.id, value_for: 'position_plus_one' }
+      }
+    )
   end
 end
